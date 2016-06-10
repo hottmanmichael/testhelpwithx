@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Test Page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/style.css" media="screen" title="no title" charset="utf-8">
+    </head>
+    <body>
+        <div class="nav-bar">
+            <div id="user-icon" class="user-icon">
+                <i class="settings fa fa-user"></i>
+            </div>
+        </div>
+        <div class="test-form">
+            <div>
+                <input id="title" type="text" name="title" >
+            </div>
+            <div>
+                <textarea id="body" type="text" name="body" ></textarea>
+            </div>
+            <div id="test-button" class="test-btn">Send to database</div>
+        </div>
+
+        <div class="posts">
+            <ul id="posts-list"></ul>
+        </div>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <!-- TEMP -->
+    <script src="../js/database.js" charset="utf-8"></script>
+    <script src="../js/modal.js" charset="utf-8"></script>
+    <script src="../js/notification.js" charset="utf-8"></script>
+    <script src="../js/navbar.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+        // Initialize Firebase
+        var config = {
+          apiKey: "AIzaSyB-Yv2W_XARpu5sx1l9BDXaQ2SNTmIB0tc",
+          authDomain: "helpwithx.firebaseapp.com",
+          databaseURL: "https://helpwithx.firebaseio.com",
+          storageBucket: "helpwithx.appspot.com",
+        };
+        firebase.initializeApp(config);
+
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            console.log("User Currently Signed in: ", user);
+            //route to posts
+            authed(user);
+          } else {
+            console.log("No user signed in: ", user);
+            //route to login
+
+          }
+        });
+
+        function authed(user) {
+            var firebaseDatabase = new FirebaseDatabase(user.uid);
+
+            console.log("FIREBASE DATABASE: ", firebaseDatabase);
+
+
+            var button = document.getElementById('test-button');
+                button.addEventListener('click', function(e) {
+                    var title = document.getElementById("title");
+                    var body = document.getElementById("body");
+                    firebaseDatabase.createNewPost(title.value, body.value);
+                });
+
+            var postList = document.getElementById('posts-list');
+            function appendToList(item) {
+                console.log("ITEM SNAPSHOT: ", item);
+                if (item.isFinished === true) return;
+                var listitem = document.createElement('li');
+                    listitem.className = "list-item";
+                    listitem.data = item; //necessary! to hold data
+
+                    var rmv = document.createElement('i');
+                        rmv.className = "fa fa-times rmv";
+                        rmv.style.float = "left";
+                        rmv.addEventListener('click', removeFromList);
+
+                    var itemTitle = document.createElement('h3');
+                        itemTitle.className = 'item-text';
+                        itemTitle.innerHTML = item.title;
+                    var itemBody = document.createElement('p');
+                        itemBody.className = 'item-text';
+                        itemBody.innerHTML = item.body;
+                    var itemPID = document.createElement('p');
+                        itemPID.className = 'item-text';
+                        itemPID.innerHTML = item.pid;
+
+
+                listitem.appendChild(rmv);
+                listitem.appendChild(itemTitle);
+                listitem.appendChild(itemBody);
+                listitem.appendChild(itemPID);
+                postList.appendChild(listitem);
+
+            }
+
+            function removeFromList(e) {
+
+                firebaseDatabase.deletePost(e.target.parentElement.data.pid);
+                // firebaseDatabase.setPostIsFinished(e.target.parentElement.data.pid);
+                e.target.parentElement.remove();
+
+            }
+
+
+
+            // firebaseDatabase.onPostAdded(function(data) {
+            //     appendToList(data);
+            // });
+            firebaseDatabase.onPostAdded(appendToList);
+
+
+            firebaseDatabase.onPostRemoved(function(data) {
+                console.log("POST WAS REMOVED!: ", data);
+            });
+
+            firebaseDatabase.onPostUpdated(function(data) {
+                // update();
+            });
+
+        }
+    </script>
+
+</html>

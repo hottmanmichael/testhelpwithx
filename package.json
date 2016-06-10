@@ -1,0 +1,27 @@
+{
+  "name": "helpwithx",
+  "version": "1.0.0",
+  "description": "This is a page we are creating to help compile questions that are asked throughout the g27 cohort. Our goal is to make a user friendly site that allows for anonymity in asking questions that pertain to work in class. It also offers a way to connect students with the class with the direct goals of getting answers to coding not just sharing info like slack.",
+  "main": "script.js",
+  "scripts": {
+    "watch": "gulp watch",
+    "gulp": "gulp css-dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jayme-T/I_need_help_page.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jayme-T/I_need_help_page/issues"
+  },
+  "homepage": "https://github.com/Jayme-T/I_need_help_page#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-compass": "^2.1.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-util": "^3.0.7"
+  }
+}
